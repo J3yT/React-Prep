@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Posts() {
+  let navigate = useNavigate();
   const { id } = useParams();
   const [posts, SetPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ export default function Posts() {
   }
 
   async function fetchPosts(userId) {
+    setLoading(true)
     const { data } = await axios.get(
       `https://jsonplaceholder.typicode.com/posts?userId=${userId || id}`
     );
@@ -27,13 +29,19 @@ export default function Posts() {
   return (
     <>
       <div className="post__search">
-        <button>← Back</button>
+        <button onClick={() => navigate('/')}>← Back</button>
         <div className="post__search--container">
           <label className="post__search--label">Search by Id</label>
           <input
             type="number"
             value={searchId}
             onChange={(event) => setSearchId(event.target.value)}
+            onKeyPress={(event) => {
+              if (event.key === 'Enter') {
+                onSearch();
+              }
+            }
+          }
           />
           <button onClick={() => onSearch()}>Enter</button>
         </div>
